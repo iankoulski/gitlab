@@ -2,6 +2,6 @@
 
 source .env
 
-docker stop ${CONTAINER}
+./exec.sh gitlab-ctl stop
 docker container rm -f ${CONTAINER}
 

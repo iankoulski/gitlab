@@ -8,5 +8,5 @@ else
 	MODE=-it
 fi 
 
-docker container run "${RUN_OPTS}" ${CONTAINER_NAME} ${MODE} ${NETWORK} ${PORT_MAP} ${VOL_MAP} ${REGISTRY}${IMAGE}${TAG} $@
+docker container run -e GITLAB_OMNIBUS_CONFIG="${GITLAB_OMNIBUS_CONFIG}" ${RUN_OPTS} ${CONTAINER_NAME} ${MODE} ${NETWORK} ${PORT_MAP} ${VOL_MAP} ${REGISTRY}${IMAGE}${TAG} $@
 
