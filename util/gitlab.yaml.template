@@ -135,3 +135,24 @@ spec:
           name: gitlab-logs-storage
         - mountPath: "/var/opt/gitlab"
           name: gitlab-data-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitlab
+  name: gitlab
+  namespace: gitlab
+spec:
+  ports:
+  - name: "gitlab-port"
+    port: 443
+    targetPort: 443
+    nodePort: 30443
+  - name: "registry-port"
+    port: 446
+    targetPort: 446
+    nodePort: 30446
+  selector:
+    app: gitlab
+  type: NodePort

@@ -1,2 +1,3 @@
 # Ignore listed patterns from git
 wd
+util/gitlab.yaml
