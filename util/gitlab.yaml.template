@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitlab
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-config-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER} 
+    path: "${NFS_GITLAB_CONFIG_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-logs-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER}
+    path: "${NFS_GITLAB_LOGS_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-data-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER}
+    path: "${NFS_GITLAB_DATA_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-config-pvc
+  namespace: gitlab
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitlab-config-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-logs-pvc
+  namespace: gitlab
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitlab-logs-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-data-pvc
+  namespace: gitlab
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitlab-data-pv
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: gitlab 
+  namespace: gitlab
+spec:
+  selector:
+    matchLabels:
+      app: gitlab
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      volumes:
+      - name: gitlab-config-storage
+        persistentVolumeClaim:
+           claimName: gitlab-config-pvc
+      - name: gitlab-logs-storage
+        persistentVolumeClaim:
+           claimName: gitlab-logs-pvc
+      - name: gitlab-data-storage
+        persistentVolumeClaim:
+           claimName: gitlab-data-pvc
+      containers:
+      - name: gitlab 
+        image: iankoulski/gitlab
+        imagePullPolicy: Always
+        securityContext:
+          privileged: false
+        env:
+        - name: GITLAB_OMNIBUS_CONFIG
+          value: "external_url '${GITLAB_EXTERNAL_URL}'; nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-gitlab.crt'; nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-gitlab.key'; registry_external_url '${GITLAB_REGISTRY_EXTERNAL_URL}'; registry_nginx['enable'] = true; registry_nginx['listen_port'] = 446; registry_nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-registry.crt'; registry_nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-registry.key';"
+        ports:
+        - containerPort: 443
+        - containerPort: 446
+        - containerPort: 22 
+        volumeMounts:
+        - mountPath: "/etc/gitlab"
+          name: gitlab-config-storage
+        - mountPath: "/var/log/gitlab"
+          name: gitlab-logs-storage
+        - mountPath: "/var/opt/gitlab"
+          name: gitlab-data-storage
