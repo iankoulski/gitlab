@@ -56,6 +56,9 @@ variables:
   ROLLOUT_RESOURCE_TYPE: deployment
 
   DOCKER_TLS_CERTDIR: ""  # https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
+  
+  PERFORMANCE_DISABLED: "true"
+  TEST_DISABLED: "true"
 
 stages:
   - build
