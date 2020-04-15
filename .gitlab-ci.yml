@@ -59,6 +59,7 @@ variables:
   
   PERFORMANCE_DISABLED: "true"
   TEST_DISABLED: "true"
+  CODE_QUALITY_DISABLED: "true"
 
 stages:
   - build
