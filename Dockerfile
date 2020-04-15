@@ -1,4 +1,4 @@
-FROM gitlab/gitlab-ce:12.5.2-ce.0
+FROM gitlab/gitlab-ee:12.5.2-ee.0
 
 MAINTAINER Alex Iankoulski <alex_iankoulski@yahoo.com>
 
