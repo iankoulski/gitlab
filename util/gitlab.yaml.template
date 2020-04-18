@@ -123,10 +123,11 @@ spec:
           privileged: false
         env:
         - name: GITLAB_OMNIBUS_CONFIG
-          value: "external_url '${GITLAB_EXTERNAL_URL}'; nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-gitlab.crt'; nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-gitlab.key'; registry_external_url '${GITLAB_REGISTRY_EXTERNAL_URL}'; registry_nginx['enable'] = true; registry_nginx['listen_port'] = 446; registry_nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-registry.crt'; registry_nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-registry.key';"
+          value: "external_url '${GITLAB_EXTERNAL_URL}'; nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-gitlab.crt'; nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-gitlab.key'; registry_external_url '${GITLAB_REGISTRY_EXTERNAL_URL}'; registry_nginx['enable'] = true; registry_nginx['listen_port'] = 446; registry_nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-registry.crt'; registry_nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-registry.key'; gitlab_pages['enable'] = '${GITLAB_PAGES_ENABLE}'; gitlab_rails['pages_host'] = '${GITLAB_PAGES_HOSTNAME}'; pages_external_url '${GITLAB_PAGES_EXTERNAL_URL}'; gitlab_pages['external_http'] = '0.0.0.0:448'; gitlab_pages['inplace_chroot'] = 'true'; pages_nginx['enable'] = '${GITLAB_PAGES_ENABLE}'; pages_nginx['listen_port'] = 449; pages_nginx['ssl_certificate'] = '/etc/gitlab/ssl/ssl-pages.crt'; pages_nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/ssl-pages.key';"
         ports:
         - containerPort: 443
         - containerPort: 446
+        - containerPort: 449
         - containerPort: 22 
         volumeMounts:
         - mountPath: "/etc/gitlab"
@@ -153,6 +154,10 @@ spec:
     port: 446
     targetPort: 446
     nodePort: 30446
+  - name: "pages-port"
+    port: 449
+    targetPort: 449
+    nodePort: 30449
   selector:
     app: gitlab
   type: NodePort
