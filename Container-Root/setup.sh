@@ -6,4 +6,6 @@ if [ -d /etc/apt ]; then
         [ -f /etc/apt/apt.conf ] && cat /etc/apt/apt.conf
 fi
 
-
+apt-get update
+apt-get install -y cron
+systemctl enable cron
