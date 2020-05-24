@@ -65,3 +65,6 @@ cd util
 kubectl apply -f ./gitlab.yaml
 ```
 
+## GitLab Community vs Enterprise Edition
+
+This repository contains branches for both the community and enterprise edition of GitLab. The only difference between the two versions of the product is that Enterprise Edition contains functionality which allows you to apply a license and enable the enterprise tier features of GitLab. It is acceptable to operate GitLab Enterprise without an installed license, which is considered the GitLab Free tier a.k.a. GitLab Core. The advantage of defaulting to GitLab Enterprise is that it is possible to apply a license if needed at some point without changing the GitLab deployment. That is why the master branch provides the GitLab Enterprise container.
