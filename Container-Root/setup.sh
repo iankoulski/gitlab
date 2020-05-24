@@ -7,7 +7,7 @@ if [ -d /etc/apt ]; then
 fi
 
 apt-get update
-apt-get install -y cron
+apt-get install -y cron git curl
 systemctl enable cron
 
 # Install docker cli
