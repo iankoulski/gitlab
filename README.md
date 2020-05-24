@@ -29,9 +29,42 @@ Once the GitLab instance is fully initialized, you may navigate to https://<GITL
 
 You will be asked to create a password. Then you can use user "root" and the password you created to log in for the first time.
 
+## Shared Runner
+
+To enable CI/CD pipelines GitLab requires a runner. This image already comes with a runner service installed locally, however to become operational, the runner needs to be registered with your gitlab instance. A registration token must be provided at registration time.
+
+To register your local runner, navigate to the Admin Area in your GitLab UI, then click on Shared Runners located at the bottom of the Features list. Copy the registration token from the instructions for setting up a shared runner. Then execute the following command:
+
+```console
+./util/gitlab-runner-register.sh <registration_token>
+```
+
 ## Technical details
 
 This container image is based on gitlab/gitlab-ce with one modification. File /opt/gitlab/embedded/cookbooks/postgresql/resources/user.rb is modified to extend the time that the startup script waits for the PostgreSQL database to come online. This avoids startup failures that may occur when the database is recovering from an unexpected shutdown like the one that occurs when the GitLab container restarts. Also, the stop.sh script in the [iankoulski/gitlab](https://github.com/iankoulski/gitlab) project gracefully shuts down the database before removing the container. This resolves [issue 893](https://gitlab.com/gitlab-org/gitlab-foss/issues/893) as reported in the [GitLab Org](https://gitlab.com/gitlab-org) open source repository.
 
 Upon initial startup in the advanced configuration, self-signed SSL certificates are generated for both GitLab and the Docker registry. These certificates are stored in wd/gitlab/config/ssl and can be replaced if needed. To set the location where GitLab configuration, logs, or data is stored, simply edit the provided .env file.
 
+## Deployment to Kubernetes
+
+GitLab can easily be deployed to a Kubernetes cluster by following the steps below:
+
+1) Modify the environment file .env. Set the proper hostnames and paths to the certificates for your GitLab instance. 
+
+2) Generate gitlab.yaml
+
+```console
+cd util
+./gitlab-yaml-generate.sh
+```
+
+3) Apply the generated gitlab.yaml to your cluster
+
+```console
+cd util
+kubectl apply -f ./gitlab.yaml
+```
+
+## GitLab Community vs Enterprise Edition
+
+This repository contains branches for both the community and enterprise edition of GitLab. The only difference between the two versions of the product is that Enterprise Edition contains functionality which allows you to apply a license and enable the enterprise tier features of GitLab. It is acceptable to operate GitLab Enterprise without an installed license, which is considered the GitLab Free tier a.k.a. GitLab Core. The advantage of defaulting to GitLab Enterprise is that it is possible to apply a license if needed at some point without changing the GitLab deployment. That is why the master branch provides the GitLab Enterprise container.

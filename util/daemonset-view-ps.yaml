@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: ds-ps-view
+  labels:
+    app: ds-ps-view
+spec:
+  selector:
+    matchLabels:
+      name: ds-ps-view
+  template:
+    metadata:
+      labels:
+        name: ds-ps-view
+    spec:
+      hostPID: true
+      containers:
+      - name: ds-ps-view
+        image: ubuntu:18.04
+        command: ["sh", "-c"]
+        args: ["while true; do date; ps -aef; sleep 60; done;"]
