@@ -9,7 +9,7 @@ echo ${GITLAB_BACKUP_CRONTAB_LINE} | sed -e 's/\\//g' >> /etc/crontab
 
 service cron start
 
-service gitlab-runner start
+#service gitlab-runner start
 
 /opt/gitlab/bin/gitlab-healthcheck --fail --max-time 10 &
 

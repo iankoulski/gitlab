@@ -64,6 +64,17 @@ cd util
 cd util
 kubectl apply -f ./gitlab.yaml
 ```
+### Deployment to local Kubernetes cluster
+
+If you are running kubernetes locally, you can run GitLab by following the steps below:
+
+1) Modify the environment file .env by setting the GITLAB_RUNTIME variable to "kubernetes"
+
+2) Execute the run.sh script
+
+3) Optionally, If you would like to register a shared runner after GitLab is up, execute script util/gitlab-runner-register-k8s.sh providing a registration token as argument. The registration token can be copied from the Admin->Runners screen in GitLab.
+
+Note: To push code to a GitLab using self-signed certificates you can use the following command: "git -c http.sslVerify=false push"
 
 ## GitLab Community vs Enterprise Edition
 
