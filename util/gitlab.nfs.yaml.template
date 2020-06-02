@@ -7,16 +7,88 @@ spec:
   - kubernetes
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-config-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER} 
+    path: "${NFS_GITLAB_CONFIG_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-logs-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER}
+    path: "${NFS_GITLAB_LOGS_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-data-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER}
+    path: "${NFS_GITLAB_DATA_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-runner-config-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER}
+    path: "${NFS_GITLAB_RUNNER_CONFIG_PATH}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-runner-data-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NFS_SERVER}
+    path: "${NFS_GITLAB_RUNNER_DATA_PATH}"
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: gitlab-config-pvc
   namespace: gitlab
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 10Gi
+  volumeName: gitlab-config-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -24,11 +96,13 @@ metadata:
   name: gitlab-logs-pvc
   namespace: gitlab
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 10Gi
+  volumeName: gitlab-logs-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -36,11 +110,13 @@ metadata:
   name: gitlab-data-pvc
   namespace: gitlab
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 10Gi
+  volumeName: gitlab-data-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -48,11 +124,13 @@ metadata:
   name: gitlab-runner-config-pvc
   namespace: gitlab
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 1Gi
+  volumeName: gitlab-runner-config-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -60,44 +138,13 @@ metadata:
   name: gitlab-runner-data-pvc
   namespace: gitlab
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 10Gi
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: gitlab-sa
-  namespace: gitlab
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: gitlab-r
-  namespace: gitlab
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - '*'
-  verbs:
-  - '*'
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-rb
-  namespace: gitlab
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-r
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-sa
-    namespace: gitlab
+  volumeName: gitlab-runner-data-pv
 ---
 apiVersion: apps/v1 
 kind: Deployment
@@ -130,7 +177,6 @@ spec:
       - name: gitlab-runner-data-storage
         persistentVolumeClaim:
            claimName: gitlab-runner-data-pvc
-      serviceAccountName: gitlab-sa
       containers:
       - name: gitlab 
         image: iankoulski/gitlab
@@ -171,15 +217,15 @@ spec:
   - name: "gitlab-port"
     port: ${GITLAB_HTTPS_PORT}
     targetPort: ${GITLAB_HTTPS_PORT}
-    nodePort: ${GITLAB_HTTPS_NODEPORT}
+    nodePort: 30${GITLAB_HTTPS_PORT}
   - name: "registry-port"
     port: ${GITLAB_REGISTRY_HTTPS_PORT}
     targetPort: ${GITLAB_REGISTRY_HTTPS_PORT}
-    nodePort: ${GITLAB_REGISTRY_HTTPS_NODEPORT}
+    nodePort: 30${GITLAB_REGISTRY_HTTPS_PORT}
   - name: "pages-port"
     port: ${GITLAB_PAGES_HTTPS_PORT}
     targetPort: ${GITLAB_PAGES_HTTPS_PORT}
-    nodePort: ${GITLAB_PAGES_HTTPS_NODEPORT}
+    nodePort: 30${GITLAB_PAGES_HTTPS_PORT}
   selector:
     app: gitlab
   type: NodePort

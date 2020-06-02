@@ -23,7 +23,7 @@ This command will start GitLab with SSL and Docker registry enabled. By default,
 
 ## Initial Login
 
-Once the GitLab instance is fully initialized, you may navigate to https://<GITLAB_HOSTNAME>
+Once the GitLab instance is fully initialized, you may navigate to GITLAB_EXTERNAL_URL as configured in .env. If you are running the project locally, you can navigate to http://localhost and you will be redirected.
 
 <p align="center"><img alt="GitLab Initial Login" src="https://github.com/iankoulski/gitlab/raw/master/doc/img/screenshot-gitlab-login1.png" width="90%" align="center"/></p>
 
@@ -64,7 +64,18 @@ cd util
 cd util
 kubectl apply -f ./gitlab.yaml
 ```
+### Deployment to local Kubernetes cluster
+
+If you are running kubernetes locally, you can run GitLab by following the steps below:
+
+1) Modify the environment file .env by setting the GITLAB_RUNTIME variable to "kubernetes"
+
+2) Execute the run.sh script
+
+3) Optionally, If you would like to register a shared runner after GitLab is up, execute script util/gitlab-runner-register-k8s.sh providing a registration token as argument. The registration token can be copied from the Admin->Runners screen in GitLab.
+
+Note: To push code to a GitLab using self-signed certificates you can use the following command: "git -c http.sslVerify=false push"
 
 ## GitLab Community vs Enterprise Edition
 
-This repository contains branches for both the community and enterprise edition of GitLab. The only difference between the two versions of the product is that Enterprise Edition contains functionality which allows you to apply a license and enable the enterprise tier features of GitLab. It is acceptable to operate GitLab Enterprise without an installed license, which is considered the GitLab Free tier a.k.a. GitLab Core. The advantage of defaulting to GitLab Enterprise is that it is possible to apply a license if needed at some point without changing the GitLab deployment. That is why the master branch provides the GitLab Enterprise container.
+This repository contains branches for both the community and enterprise edition of GitLab. The only difference between the two versions of the product is that Enterprise Edition contains functionality which allows you to apply a license and enable the enterprise tier features of GitLab. It is acceptable to operate GitLab Enterprise without an installed license, which is considered the GitLab Free tier a.k.a. GitLab Core. The advantage of defaulting to GitLab Enterprise is that it is possible to apply a license if needed at some point without changing the GitLab deployment. That is why the master branch provides the GitLab Enterprise container. More information on this subject can be found [here](https://about.gitlab.com/install/ce-or-ee/).
