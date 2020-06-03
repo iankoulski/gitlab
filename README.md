@@ -23,7 +23,7 @@ This command will start GitLab with SSL and Docker registry enabled. By default,
 
 ## Initial Login
 
-Once the GitLab instance is fully initialized, you may navigate to GITLAB_EXTERNAL_URL as configured in .env. If you are running the project locally, you can navigate to http://localhost and you will be redirected.
+Once the GitLab instance is fully initialized (see ./logs.sh), you may navigate to GITLAB_EXTERNAL_URL as shown by the ./run.sh or ./status.sh script. If you are running the project locally in docker, you can navigate to http://localhost and you will be redirected automatically.
 
 <p align="center"><img alt="GitLab Initial Login" src="https://github.com/iankoulski/gitlab/raw/master/doc/img/screenshot-gitlab-login1.png" width="90%" align="center"/></p>
 
