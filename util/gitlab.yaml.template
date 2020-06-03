@@ -133,7 +133,7 @@ spec:
       serviceAccountName: gitlab-sa
       containers:
       - name: gitlab 
-        image: iankoulski/gitlab
+        image: ${REGISTRY}${IMAGE}${TAG}
         imagePullPolicy: Always
         securityContext:
           privileged: false
