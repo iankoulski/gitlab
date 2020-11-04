@@ -1,4 +1,4 @@
-FROM gitlab/gitlab-ee:12.9.3-ee.0
+FROM gitlab/gitlab-ee:12.10.14-ee.0
 
 MAINTAINER Alex Iankoulski <alex_iankoulski@yahoo.com>
 
