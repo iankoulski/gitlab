@@ -2,7 +2,14 @@
 
 source .env
 
-./exec.sh gitlab-ctl stop
+{ # try
+	echo "Stopping gitlab gracefully ..." &&
+	./exec.sh gitlab-ctl stop 
+} || { # catch
+	echo "Could not stop gitlab gracefully"
+}
+
+
 if [ "${GITLAB_RUNTIME}" == "kubernetes" ]; then
 	pushd util
 	kubectl delete -f ./gitlab.yaml
