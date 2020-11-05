@@ -25,3 +25,7 @@ if [ "${GITLAB_RUNTIME}" == "kubernetes" ]; then
 else
 	eval docker container run -e GITLAB_OMNIBUS_CONFIG=\"${GITLAB_OMNIBUS_CONFIG}\" ${RUN_OPTS} ${CONTAINER_NAME} ${MODE} ${NETWORK} ${PORT_MAP} ${VOL_MAP} ${REGISTRY}${IMAGE}${TAG} $@
 fi
+
+echo ""
+echo "GITLAB_EXTERNAL_URL=${GITLAB_EXTERNAL_URL}"
+echo ""
